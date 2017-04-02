@@ -4,6 +4,12 @@
 #include <BridgeServer.h>
 #include <BridgeClient.h>
 
+struct Color {
+  uint16_t r = 0; 
+  uint16_t g = 0;
+  uint16_t b = 0;
+  uint16_t c = 0;
+} color;
 
 // Ping Upper = Pin 8,9
 //Ping lower = Pin 10,11
@@ -20,6 +26,9 @@ const int RIGHT_BACKWARD = 4;
 const int RIGHT_FORWARD = 5;
 const int LEFT_FORWARD = 6;
 const int LEFT_BACKWARD = 7;
+
+/* init color values */
+Color prevColor;  //TODO: setup to check center later
  
 
   /* Initialise with default values (int time = 2.4ms, gain = 1x) */
@@ -94,21 +103,24 @@ void driveForward(){
 }
 
 void printColor(){
-  uint16_t r, g, b, c, colorTemp, lux;
+  uint16_t colorTemp, lux;
+  Color curColor;
   
-  tcs.getRawData(&r, &g, &b, &c);
-  colorTemp = tcs.calculateColorTemperature(r, g, b);
-  lux = tcs.calculateLux(r, g, b);
-  
-  Serial.print("Color Temp: "); Serial.print(colorTemp, DEC); Serial.print(" K - ");
-  Serial.print("Lux: "); Serial.print(lux, DEC); Serial.print(" - ");
-  Serial.print("R: "); Serial.print(r, DEC); Serial.print(" ");
-  Serial.print("G: "); Serial.print(g, DEC); Serial.print(" ");
-  Serial.print("B: "); Serial.print(b, DEC); Serial.print(" ");
-  Serial.print("C: "); Serial.print(c, DEC); Serial.print(" ");
+  getColor(curColor);
+  Serial.print("R: "); Serial.print(curColor.r, DEC); Serial.print(" ");
+  Serial.print("G: "); Serial.print(curColor.g, DEC); Serial.print(" ");
+  Serial.print("B: "); Serial.print(curColor.b, DEC); Serial.print(" ");
+  Serial.print("C: "); Serial.print(curColor.c, DEC); Serial.print(" ");
   Serial.println(" ");
 }
 
+int isRed(Color &curColor){
+  return (curColor.r > 200 && curColor.g < 100 && curColor.b < 100);
+}
+
+void getColor(Color curColor) {
+  tcs.getRawData(&curColor.r, &curColor.g, &curColor.b, &curColor.c);
+}
 
 
 
