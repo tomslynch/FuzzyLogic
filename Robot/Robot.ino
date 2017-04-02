@@ -3,6 +3,8 @@
 #include <Bridge.h>
 #include <BridgeServer.h>
 #include <BridgeClient.h>
+#include <Wire.h>
+#include "Adafruit_TCS34725.h"
 
 struct Color {
   uint16_t r = 0; 
@@ -37,12 +39,10 @@ Color prevColor;  //TODO: setup to check center later
 /* Initialise with specific int time and gain values */
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_700MS, TCS34725_GAIN_1X);
 
-
 void setup() {
   Serial.begin(9600);
   
-  pos = 0;
-  hitServo.attach(4);
+
   //hitBall();
   pinMode(RIGHT_BACKWARD,OUTPUT);
   pinMode(RIGHT_FORWARD,OUTPUT);
@@ -63,6 +63,7 @@ void setup() {
 
 void loop() {
  check();
+ printColor();
  delay(1000);
 }
 
