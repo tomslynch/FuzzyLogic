@@ -1,3 +1,5 @@
+#include <Adafruit_MotorShield.h>
+#include <AccelStepper.h>
 #include "Ultrasonic.h"
 #include <Servo.h>
 #include <Bridge.h>
@@ -5,7 +7,10 @@
 #include <BridgeClient.h>
 #include <Wire.h>
 #include "Adafruit_TCS34725.h"
+#include <Servo.h>
 
+Servo myservo;
+int pos = 0;
 struct Color {
   uint16_t r = 0; 
   uint16_t g = 0;
@@ -42,7 +47,8 @@ Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_700MS, TCS347
 void setup() {
   Serial.begin(9600);
   
-
+  myservo.attach(12);  // attaches the servo on pin 9 to the servo object
+//  Serial.println("ATTACH DIS BITCH");
   //hitBall();
   pinMode(RIGHT_BACKWARD,OUTPUT);
   pinMode(RIGHT_FORWARD,OUTPUT);
@@ -95,19 +101,26 @@ void driveForward(){
   analogWrite (LEFT_BACKWARD, 0) ;
 	analogWrite (RIGHT_FORWARD, 150) ; 
 	analogWrite (LEFT_FORWARD, 150) ;
+  
 	delay(100);
+ 
   analogWrite (RIGHT_FORWARD, 0) ; 
   analogWrite (LEFT_FORWARD, 0) ;
   digitalWrite(RIGHT_FORWARD, LOW); 
   digitalWrite(LEFT_FORWARD, LOW) ;
+  move();
 	
 }
 
 void printColor(){
   uint16_t colorTemp, lux;
   Color curColor;
-  
-  getColor(curColor);
+  tcs.getRawData(&curColor.r, &curColor.g, &curColor.b, &curColor.c);
+ long avg = curColor.c/3 ;
+ curColor.r - curColor.r/avg;
+ curColor.g - curColor.g/avg;
+ curColor.b - curColor.b/avg;
+//  getColor(&curColor);
   Serial.print("R: "); Serial.print(curColor.r, DEC); Serial.print(" ");
   Serial.print("G: "); Serial.print(curColor.g, DEC); Serial.print(" ");
   Serial.print("B: "); Serial.print(curColor.b, DEC); Serial.print(" ");
@@ -116,12 +129,21 @@ void printColor(){
 }
 
 int isRed(Color &curColor){
-  return (curColor.r > 200 && curColor.g < 100 && curColor.b < 100);
+  return (curColor.r > 2000 && curColor.g < 100 && curColor.b < 100);
 }
 
-void getColor(Color curColor) {
-  tcs.getRawData(&curColor.r, &curColor.g, &curColor.b, &curColor.c);
+void move() {
+  for (pos = 0; pos <= 180; pos += 10) { // goes from 0 degrees to 180 degrees
+    // in steps of 1 degree
+    Serial.println("HEER");
+    myservo.write(pos);              // tell servo to go to position in variable 'pos'
+    delay(100);                       // waits 15ms for the servo to reach the position
+  }
+  
 }
+//void getColor(Color &curColor) {
+//  tcs.getRawData(curColor.r, curColor.g, curColor.b, curColor.c);
+//}
 
 
 
