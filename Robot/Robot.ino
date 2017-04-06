@@ -8,6 +8,16 @@
 #include <Wire.h>
 #include "Adafruit_TCS34725.h"
 #include <Servo.h>
+#include "utility/Adafruit_MS_PWMServoDriver.h"
+
+// Create the motor shield object with the default I2C address
+Adafruit_MotorShield AFMS = Adafruit_MotorShield(); 
+// Or, create it with a different I2C address (say for stacking)
+// Adafruit_MotorShield AFMS = Adafruit_MotorShield(0x61); 
+
+// Connect a stepper motor with 200 steps per revolution (1.8 degree)
+// to motor port #2 (M3 and M4)
+Adafruit_StepperMotor *myMotor = AFMS.getStepper(200, 2);
 
 Servo myservo;
 int pos = 0;
@@ -46,6 +56,8 @@ Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_700MS, TCS347
 
 void setup() {
   Serial.begin(9600);
+
+  myMotor->setSpeed(50);  // 10 rpm  
   
   myservo.attach(12);  // attaches the servo on pin 9 to the servo object
 //  Serial.println("ATTACH DIS BITCH");
@@ -54,7 +66,7 @@ void setup() {
   pinMode(RIGHT_FORWARD,OUTPUT);
   pinMode(LEFT_FORWARD,OUTPUT);
   pinMode(LEFT_BACKWARD,OUTPUT);
-  Serial.begin(9600);
+  
   
   if (tcs.begin()) {
     Serial.println("Found sensor");
@@ -76,11 +88,11 @@ void loop() {
 
 //
 void check() {
-  long distanceBottom = (ultrasonicBottom.Ranging(CM));
+  long distanceBottom = (ultrasonicBottom.distanceRead());
   Serial.print("BOTTOM: ");
   Serial.print(distanceBottom);
   Serial.println(" CM");
-  long distanceTop = (ultrasonicTop.Ranging(CM));
+  long distanceTop = (ultrasonicTop.distanceRead());
   Serial.print("TOP: ");
   Serial.print(distanceTop);
   Serial.println(" CM");
@@ -133,7 +145,7 @@ int isRed(Color &curColor){
 }
 
 void move() {
-  for (pos = 0; pos <= 180; pos += 10) { // goes from 0 degrees to 180 degrees
+  for (pos = 0; pos <= 180; pos += 5) { // goes from 0 degrees to 180 degrees
     // in steps of 1 degree
     Serial.println("HEER");
     myservo.write(pos);              // tell servo to go to position in variable 'pos'
