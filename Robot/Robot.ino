@@ -10,8 +10,6 @@
 #include <Servo.h>
 #include "utility/Adafruit_MS_PWMServoDriver.h"
 
-//TODO: Locate Find Ball
-//TODO: Rotate Base(?)
 //TODO: Rotate Hitter
 //TODO: Hit ball
 
@@ -56,6 +54,7 @@ const int LEFT_BACKWARD = 7;
 /*
  * Globals
  */
+ //TODO: tune constants
 int MOVE = 500; //delay for moving (delay for half second)
 int STEP5 = 50; //delay scale for rotation (delay time to move 5 degrees)
 
