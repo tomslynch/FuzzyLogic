@@ -426,7 +426,7 @@ void printLine() {
          //TODO: handle worst case scenarios - can't find after moving across entire line
          if (findBall()) {
              //tether to correct ball
-             tetherDeg[0] = ballRot - ROT_UNIT;         // offset robot
+             tetherDeg[0] = ballRot - ROT_UNIT;              // offset robot
              tetherDis[0] = (lastSeen-10)/RADAR_SCALE;       // scale down distance
              tether();
          } else {
@@ -446,7 +446,6 @@ void printLine() {
     if (strokes >= FAILSAFE_LIMIT) {
         godspeed();
     }
-
 }
 
 void scalePathfinder() {
