@@ -599,7 +599,7 @@ void HITTING (int deg, int dis) {
         printStatus("    {HITTING}", "HITTING BALL (SLOW)", -1);
     }
 
-
+    strokes++;
     resetHitter();
 }
 
