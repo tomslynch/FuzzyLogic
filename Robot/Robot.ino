@@ -52,7 +52,15 @@ const int LEFT_BACKWARD = 7;
 
 /* init color values */
 Color prevColor;  //TODO: setup to check center later
- 
+
+/*
+ * Globals
+ */
+long distanceTop;
+long distanceBottom;
+
+
+
 
   /* Initialise with default values (int time = 2.4ms, gain = 1x) */
 // Adafruit_TCS34725 tcs = Adafruit_TCS34725();
@@ -162,6 +170,37 @@ void move() {
 //void getColor(Color &curColor) {
 //  tcs.getRawData(curColor.r, curColor.g, curColor.b, curColor.c);
 //}
+
+/*
+ * Ball Detection
+ */
+
+// Return 0 if found in 360 around robot, else -1
+int findBall(){
+  //rotate while checking ball
+}
+
+//return 0 if radar input sees ball, else -1
+int seeBall(){
+  distanceTop = (ultrasonicTop.distanceRead());
+  distanceBottom = (ultrasonicBottom.distanceRead());
+  printRadar();
+  
+  return (distanceTop - distanceBottom >= 10);
+}
+
+void printRadar() {
+  Serial.print("TOP: ");
+  Serial.print(distanceTop);
+  Serial.println(" CM");
+  Serial.print("BOTTOM: ");
+  Serial.print(distanceBottom);
+  Serial.println(" CM");
+
+  if (distanceTop - distanceBottom >= 10) {
+    Serial.println("---TARGET DETECTED---");
+  }  
+}
  
 
 
