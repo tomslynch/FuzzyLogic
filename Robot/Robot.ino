@@ -54,7 +54,7 @@ const int LEFT_BACKWARD = 7;
  * CONSTANTS
  */
 //TODO: tune constants
-int MOVE = 100; //delay for moving (delay for half second)
+int MOVE = 500; //delay for moving (delay for half second)
 int STEP5 = 50; //delay scale for rotation (delay time to move 5 degrees)
 
 int DIST_UNIT = 1;  //movement unit
@@ -311,16 +311,17 @@ void go(int dist) {
    
   } else if (dist < 0) {
     //Reverse
-    digitalWrite(RIGHT_FORWARD, LOW); 
-    digitalWrite(LEFT_FORWARD, LOW); 
-    digitalWrite(RIGHT_BACKWARD, HIGH); 
-    digitalWrite(LEFT_BACKWARD, HIGH);
-    analogWrite (RIGHT_BACKWARD, 150); 
-    analogWrite (LEFT_BACKWARD, 150);
-    analogWrite (RIGHT_FORWARD, 0);
-    analogWrite (LEFT_FORWARD, 0);
-    
-    delay(MOVE * abs(dist));
+      digitalWrite(RIGHT_FORWARD, LOW);
+      digitalWrite(RIGHT_BACKWARD, HIGH);
+      digitalWrite(LEFT_FORWARD, LOW);
+      digitalWrite(LEFT_BACKWARD, HIGH);
+      
+      analogWrite (RIGHT_FORWARD, 0);
+      analogWrite (RIGHT_BACKWARD, 150);
+      analogWrite (LEFT_FORWARD, 0);
+      analogWrite (LEFT_BACKWARD, 150);
+
+      delay(MOVE * abs(dist));
   }
 
   resetTracks();
