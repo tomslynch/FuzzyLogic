@@ -10,8 +10,6 @@
 #include <Servo.h>
 #include "utility/Adafruit_MS_PWMServoDriver.h"
 
-//TODO: keep stack of "vectors"
-//TODO: Tether to line when leaving to hit ball
 //TODO: Rotate Hitter
 //TODO: Hit ball
 
@@ -72,6 +70,8 @@ int COLOR_LOW = 100;
 
 int CHASSIS_DIS = 1;
 
+int PLAY_SCALE = 10;
+
 // color vars
 Color curColor;
 
@@ -90,6 +90,14 @@ int redRot = 0;
 int scanDeg[100];
 int scanDis[100];
 int lineCounter = 0;
+
+int playDeg[100];
+int playDis[100];
+
+int tetherDeg[100];
+int tetherDis[100];
+int tetherCounter;
+
 
 /*
  * -------- START --------
@@ -350,7 +358,6 @@ int findRed() {
     return 0;
   }
 }
-
 void recordLine() {
     int curDistance = 0;
 
@@ -367,7 +374,6 @@ void recordLine() {
     //record
     scanDis[lineCounter] = curDistance;
 }
-
 void printLine() {
     Serial.print("[");
     Serial.print(lineCounter);
@@ -376,13 +382,34 @@ void printLine() {
     Serial.print(", distance: ");
     Serial.println(scanDis[lineCounter]);
 }
- 
 
 /**
  * PLAY MODE
  */
+//TODO: Tether to line when leaving to hit ball
 
- void play(){}
+ void play(){
+    //pull values from pathfinder results
+    scalePathfinder();
+
+     //
+
+}
+
+void scalePathfinder() {
+    Serial.println("Your knowledge belongs to me, Pathfinder.");
+    for (int i = 0; i < lineCounter; i++) {
+        playDeg[i] = scanDeg[i];
+        playDis[i] = scanDis[i] * PLAY_SCALE;
+    }
+    Serial.println("Your knowledge has been consumed. EHEHEHEHEEHEHEHHEHEHEHEH");
+}
+
+void tether() {
+    //Get to ball
+    //calculate angle path
+
+}
 
 
 
