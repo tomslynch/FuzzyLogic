@@ -315,6 +315,15 @@ void printRadar() {
     Serial.println("---TARGET DETECTED---");
   }  
 }
+
+/**
+ * MODES
+ */
+
+ //SCAN
+ void scan() {
+  
+ }
  
 
 
