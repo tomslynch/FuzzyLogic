@@ -528,6 +528,8 @@ void returnToLine() {
 
 //failsafe methods
 void godspeed() {
+    dance();
+
     int deg = 0;
     int dis = 0;
 
@@ -569,6 +571,12 @@ void failsafeSpam() {
     printStatus("------------------", "VAROVÁNÍ! -------------------", -1);
     printStatus("---------------------", "警告! --------------------", -1);
     printStatus("-----------------", "ADVERTENCIA! -----------------", -1);
+}
+void dance() {
+    drive(25, 0);
+    drive(-25, 0);
+    drive(25, 0);
+    drive(-25, 0);
 }
 
 /**
