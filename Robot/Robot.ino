@@ -54,7 +54,7 @@ const int LEFT_BACKWARD = 7;
  * CONSTANTS
  */
 //TODO: tune constants
-int MOVE = 500; //delay for moving (delay for half second)
+int MOVE = 200; //delay for moving (delay for half second)
 int STEP5 = 50; //delay scale for rotation (delay time to move 5 degrees)
 
 int DIST_UNIT = 1;  //movement unit
@@ -134,7 +134,7 @@ void setup() {
 
   myMotor->setSpeed(50);  // 10 rpm  
   
-  myservo.attach(12);  // attaches the servo on pin 9 to the servo object
+  myservo.attach(12);  // attaches the servo on pin 12 to the servo object
 //  Serial.println("ATTACH DIS BITCH");
   //hitBall();
   pinMode(RIGHT_BACKWARD,OUTPUT);
@@ -158,8 +158,25 @@ void setup() {
 
 void loop() {
     //TODO: check for modes with button
-    strokes = 15;
-    godspeed();
+//    strokes = 15;
+//    godspeed();
+
+  go(1);
+  delay(5000);
+
+
+//for (pos = 0; pos <= 180; pos += 50) { // goes from 0 degrees to 180 degrees
+//    // in steps of 1 degree
+//    myservo.write(pos);              // tell servo to go to position in variable 'pos'
+//    Serial.println(pos);
+//    delay(1);                       // waits 15ms for the servo to reach the position
+//  }
+//  for (pos = 180; pos >= 0; pos -= 1) { // goes from 180 degrees to 0 degrees
+//    myservo.write(pos);              // tell servo to go to position in variable 'pos'
+//    Serial.println(pos);
+//    delay(11);                       // waits 15ms for the servo to reach the position
+//  }
+
 }
 
 /**
