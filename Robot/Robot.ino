@@ -422,7 +422,7 @@ void printLine() {
     scalePathfinder();
 
      //Hit ball from start position
-     HITTING(playDeg[lineCounter], playDis[lineCounter])
+     HITTING(playDeg[lineCounter], playDis[lineCounter]);
 
      while(lineCounter != lineTotal || strokes >= FAILSAFE_LIMIT) {
          tetherCounter = 0;
