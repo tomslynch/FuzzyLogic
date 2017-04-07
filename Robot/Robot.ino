@@ -10,6 +10,12 @@
 #include <Servo.h>
 #include "utility/Adafruit_MS_PWMServoDriver.h"
 
+//TODO: Locate Find Ball
+//TODO: Rotate Base(?)
+//TODO: Rotate Hitter
+//TODO: Hit ball
+
+
 // Create the motor shield object with the default I2C address
 Adafruit_MotorShield AFMS = Adafruit_MotorShield(); 
 // Or, create it with a different I2C address (say for stacking)
@@ -156,6 +162,7 @@ void move() {
 //void getColor(Color &curColor) {
 //  tcs.getRawData(curColor.r, curColor.g, curColor.b, curColor.c);
 //}
+ 
 
 
 
