@@ -120,6 +120,9 @@ int strokes = 0;
 long randDeg = 0;
 long randDis = 0;
 
+//mode button
+//TODO
+
 
 
 /*
@@ -149,9 +152,12 @@ void setup() {
   delay(10);
   //drive();
 
+    randomSeed(analogRead(0));  //for failsafe
+
 }
 
 void loop() {
+    //TODO: check for modes with button
 }
 
 /**
@@ -416,7 +422,7 @@ void printLine() {
     scalePathfinder();
 
      //Hit ball from start position
-     //TODO: HITTING(playDeg[lineCounter], playDis[lineCounter])
+     HITTING(playDeg[lineCounter], playDis[lineCounter])
 
      while(lineCounter != lineTotal || strokes >= FAILSAFE_LIMIT) {
          tetherCounter = 0;
@@ -498,7 +504,7 @@ void tether() {
     tetherDis[tetherCounter] = distance;
 
     //Should be in range to hit now
-    //TODO: Calculate angle and distance with triangles
+    //TODO: Calculate angle and distance with triangles?
     if (playDis[lineCounter] != 0) {
         if (tetherDeg[0] > 180) {
             returnDeg = (tetherDeg[0]/2);
@@ -506,7 +512,7 @@ void tether() {
             returnDeg = (-tetherDeg[0]/2);
         }
     }
-    //TODO: HITTING(returnDeg, tetherDis[0])
+    HITTING(returnDeg, tetherDis[0]);
 
     //Reverse to line
     returnToLine();
@@ -520,6 +526,7 @@ void returnToLine() {
     }
 }
 
+//failsafe methods
 void godspeed() {
     int deg = 0;
     int dis = 0;
@@ -538,7 +545,6 @@ void godspeed() {
         drive(randDeg, randDis);
     }
 }
-
 void failsafeSpam() {
     printStatus("-------------------", "WARNING! -------------------", -1);
     printStatus("---------------", "ПРЕДУПРЕЖДЕНИЕ! ----------------", -1);
@@ -572,7 +578,7 @@ void failsafeSpam() {
 void HITTING (int deg, int dis) {
     int stepperDeg = (deg/5)*2;   //TODO: figure out how to make this close to being accurate
     //move hitter into position
-//    myMotor.step(stepperDeg);
+//    myMotor.step(stepperDeg); //TODO
 
     printStatus("    {HITTING}", "HITTING BALL Degree: ", stepperDeg);
     printStatus("    {HITTING}", "HITTING BALL Distance: ", stepperDeg);
@@ -592,9 +598,8 @@ void HITTING (int deg, int dis) {
 void resetHitter() {
     //rotate disc to default
     //rotate hitter to default
+    //TODO
 }
-
-
 
 
 /**
