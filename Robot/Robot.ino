@@ -156,27 +156,42 @@ void setup() {
 
 }
 
+int counter = 0;
+
 void loop() {
     //TODO: check for modes with button
-//    strokes = 15;
-//    godspeed();
+  if (counter == 0) {
+    drive(0,2);  
+  }
+  
+  hailMarry();
 
-  go(1);
   delay(5000);
+  counter++;
 
+  if (counter > 2) {
+      for (pos = 0; pos <= 180; pos += 50) { // goes from 0 degrees to 180 degrees
+      // in steps of 1 degree
+      myservo.write(pos);              // tell servo to go to position in variable 'pos'
+      Serial.println(pos);
+      delay(1);                       // waits 15ms for the servo to reach the position
+    }
+    for (pos = 180; pos >= 0; pos -= 1) { // goes from 180 degrees to 0 degrees
+      myservo.write(pos);              // tell servo to go to position in variable 'pos'
+      Serial.println(pos);
+      delay(11);                       // waits 15ms for the servo to reach the position
+    }
+  }
 
-//for (pos = 0; pos <= 180; pos += 50) { // goes from 0 degrees to 180 degrees
-//    // in steps of 1 degree
-//    myservo.write(pos);              // tell servo to go to position in variable 'pos'
-//    Serial.println(pos);
-//    delay(1);                       // waits 15ms for the servo to reach the position
-//  }
-//  for (pos = 180; pos >= 0; pos -= 1) { // goes from 180 degrees to 0 degrees
-//    myservo.write(pos);              // tell servo to go to position in variable 'pos'
-//    Serial.println(pos);
-//    delay(11);                       // waits 15ms for the servo to reach the position
-//  }
-
+  if (counter > 50) {
+    drive(70,0);
+    drive(70,0);
+    drive(70,0);
+    drive(70,0);
+    drive(70,0);
+  }
+//seeBall();
+//delay(500);
 }
 
 /**
@@ -340,7 +355,7 @@ void go(int dist) {
       analogWrite (LEFT_FORWARD, 0);
       analogWrite (LEFT_BACKWARD, 150);
 
-      delay(MOVE * abs(dist));
+      delay(MOVE * (360 - abs(dist)));
   }
 
   resetTracks();
@@ -360,7 +375,7 @@ void stepOne() {
     drive(0, 1);
 }
 void rotateOne() {
-    drive (5, 0);
+    drive (25, 0);
 }
 
 /**
@@ -545,21 +560,18 @@ void returnToLine() {
 //failsafe methods
 void godspeed() {
     dance();
-
-    int deg = 0;
-    int dis = 0;
-
+    
     failsafeSpam();
     while(1) {
         while(findBall()){
             while(seeBall() && lastSeen > HITTING_DIS) {
-                drive(0, DIST_UNIT);
+                drive(0, 1);
             }
-            HITTING(45, 3);
+//            HITTING(45, 3);
         }
 
-        randDeg = random(300);
-        randDis = random(5);
+        randDeg = random(70);
+        randDis = random(3);
         drive(randDeg, randDis);
     }
 }
@@ -640,7 +652,9 @@ void printStatus(char * prefix, char * msg, int opt) {
     }
 }
 
-
+void hailMarry() {
+  drive(random(70), 3);
+}
 
 
 
