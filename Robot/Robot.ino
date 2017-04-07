@@ -10,10 +10,6 @@
 #include <Servo.h>
 #include "utility/Adafruit_MS_PWMServoDriver.h"
 
-//TODO: Rotate Hitter
-//TODO: Hit ball
-
-
 struct Color {
   uint16_t r = 0; 
   uint16_t g = 0;
@@ -52,7 +48,11 @@ const int RIGHT_FORWARD = 5;
 const int LEFT_FORWARD = 6;
 const int LEFT_BACKWARD = 7;
 
-//CONSTANTS
+
+
+/*
+ * CONSTANTS
+ */
 //TODO: tune constants
 int MOVE = 500; //delay for moving (delay for half second)
 int STEP5 = 50; //delay scale for rotation (delay time to move 5 degrees)
@@ -72,6 +72,9 @@ int RADAR_SCALE = 10;
 
 int HITTING_DIS = 10;
 int FAILSAFE_LIMIT = 15;
+
+int FASTHIT_POS = 120;
+int SLOWHIT_POS = 90;
 
 
 /*
@@ -112,6 +115,11 @@ int tetherCounter;
 
 //hitter
 int strokes = 0;
+
+//failsafe
+long randDeg = 0;
+long randDis = 0;
+
 
 
 /*
@@ -506,13 +514,84 @@ void tether() {
 
 void returnToLine() {
     for (int i = tetherCounter; i >= 0; i--) {
+        printStatus("    {TETHER}", "RETURNING TO LINE... ", tetherCounter);
         drive(0, -tetherDis[i]);
         drive(-tetherDeg[i], 0);
     }
 }
 
 void godspeed() {
+    int deg = 0;
+    int dis = 0;
 
+    failsafeSpam();
+    while(1) {
+        while(findBall()){
+            while(seeBall() && lastSeen > HITTING_DIS) {
+                drive(0, DIST_UNIT);
+            }
+            HITTING(45, 3);
+        }
+
+        randDeg = random(300);
+        randDis = random(5);
+        drive(randDeg, randDis);
+    }
+}
+
+void failsafeSpam() {
+    printStatus("-------------------", "WARNING! -------------------", -1);
+    printStatus("---------------", "ПРЕДУПРЕЖДЕНИЕ! ----------------", -1);
+    printStatus("-------------------", "WARNUNG! -------------------", -1);
+    printStatus("------------------", "VAROVÁNÍ! -------------------", -1);
+    printStatus("---------------------", "警告! --------------------", -1);
+    printStatus("-----------------", "ADVERTENCIA! -----------------", -1);
+    printStatus("XXXXXXXXXXXX", "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", -1);
+    printStatus("XXXXXXXXXXXX", "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", -1);
+    printStatus("XXXXXXXXXXXX", "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", -1);
+    printStatus("XXXXXXXXXXXX", "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", -1);
+    printStatus("XXXXXXXXXXXX", "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", -1);
+    printStatus("XXXXXXXXXXXX", "   FAILSAFE ENGAGED   XXXXXXXXXXXX", -1);
+    printStatus("XXXXXXXXXXXX", "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", -1);
+    printStatus("XXXXXXXXXXXX", "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", -1);
+    printStatus("XXXXXXXXXXXX", "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", -1);
+    printStatus("XXXXXXXXXXXX", "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", -1);
+    printStatus("XXXXXXXXXXXX", "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", -1);
+    printStatus("-------------------", "WARNING! -------------------", -1);
+    printStatus("---------------", "ПРЕДУПРЕЖДЕНИЕ! ----------------", -1);
+    printStatus("-------------------", "WARNUNG! -------------------", -1);
+    printStatus("------------------", "VAROVÁNÍ! -------------------", -1);
+    printStatus("---------------------", "警告! --------------------", -1);
+    printStatus("-----------------", "ADVERTENCIA! -----------------", -1);
+}
+
+/**
+ * HITTING Functions
+ */
+
+void HITTING (int deg, int dis) {
+    int stepperDeg = (deg/5)*2;   //TODO: figure out how to make this close to being accurate
+    //move hitter into position
+//    myMotor.step(stepperDeg);
+
+    printStatus("    {HITTING}", "HITTING BALL Degree: ", stepperDeg);
+    printStatus("    {HITTING}", "HITTING BALL Distance: ", stepperDeg);
+    //swing FAST or SLOW
+    if (dis >= 3) {
+        myservo.write(FASTHIT_POS);
+        printStatus("    {HITTING}", "HITTING BALL (FAST)", -1);
+    } else {
+        myservo.write(SLOWHIT_POS);
+        printStatus("    {HITTING}", "HITTING BALL (SLOW)", -1);
+    }
+
+
+    resetHitter();
+}
+
+void resetHitter() {
+    //rotate disc to default
+    //rotate hitter to default
 }
 
 
@@ -525,7 +604,7 @@ void godspeed() {
 void printStatus(char * prefix, char * msg, int opt) {
     Serial.print(prefix);
     Serial.print(msg);
-    if (opt) {
+    if (opt != -1) {
         Serial.println(opt);
     } else {
         Serial.println();
@@ -539,21 +618,6 @@ void printStatus(char * prefix, char * msg, int opt) {
 /**
  * Delete?
  */
-
-//
-//void check() {
-//  long distanceBottom = (ultrasonicBottom.distanceRead());
-//  Serial.print("BOTTOM: ");
-//  Serial.print(distanceBottom);
-//  Serial.println(" CM");
-//  long distanceTop = (ultrasonicTop.distanceRead());
-//  Serial.print("TOP: ");
-//  Serial.print(distanceTop);
-//  Serial.println(" CM");
-//  if(distanceTop > distanceBottom){
-//    driveForward();
-//  }
-//}
 
 //
 //void driveForward(){
