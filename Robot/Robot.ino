@@ -99,18 +99,18 @@ int ballRot = 0; //rotation from line to find ball
 int redRot = 0;
 
 //scan mode
-int scanDeg[10];
-int scanDis[10];
+int scanDeg[100];
+int scanDis[100];
 int lineCounter = 0;
 int lineTotal = 0;
 
 //play mode
-int playDeg[10];
-int playDis[10];
+int playDeg[100];
+int playDis[100];
 
 //tether
-int tetherDeg[10];
-int tetherDis[10];
+int tetherDeg[100];
+int tetherDis[100];
 int tetherCounter;
 
 //hitter
@@ -158,10 +158,8 @@ void setup() {
 
 void loop() {
     //TODO: check for modes with button
-    strokes = 20;
-    drive(250,250);
-//dance();
-//  play();
+    strokes = 15;
+    godspeed();
 }
 
 /**
@@ -290,7 +288,7 @@ void rotate(int deg){
     analogWrite (LEFT_BACKWARD, 150);    
   }
 
-  delay(STEP5 * (deg/5));
+  delay(STEP5 * (abs(deg/5)));
  
   resetTracks();
 }
@@ -307,7 +305,10 @@ void go(int dist) {
     analogWrite (RIGHT_BACKWARD, 0); 
     analogWrite (LEFT_FORWARD, 150);
     analogWrite (LEFT_BACKWARD, 0);
-    
+
+    Serial.println(MOVE * dist);
+    Serial.println(MOVE);
+    Serial.println(dist);
     delay(MOVE * dist);
    
   } else if (dist < 0) {
@@ -339,7 +340,7 @@ void resetTracks() {
 }
 
 void stepOne() {
-    drive(0, 5);
+    drive(0, 1);
 }
 void rotateOne() {
     drive (5, 0);
