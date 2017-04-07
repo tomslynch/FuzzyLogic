@@ -54,7 +54,7 @@ const int LEFT_BACKWARD = 7;
  * CONSTANTS
  */
 //TODO: tune constants
-int MOVE = 500; //delay for moving (delay for half second)
+int MOVE = 100; //delay for moving (delay for half second)
 int STEP5 = 50; //delay scale for rotation (delay time to move 5 degrees)
 
 int DIST_UNIT = 1;  //movement unit
@@ -158,6 +158,9 @@ void setup() {
 
 void loop() {
     //TODO: check for modes with button
+    strokes = 20;
+    drive(250,250);
+//  play();
 }
 
 /**
@@ -265,8 +268,8 @@ void rotate(int deg){
     digitalWrite(LEFT_FORWARD, HIGH); 
     digitalWrite(LEFT_BACKWARD, LOW);
 
-    analogWrite (RIGHT_FORWARD, 150); 
-    analogWrite (RIGHT_BACKWARD, 0);
+    analogWrite (RIGHT_FORWARD, 0); 
+    analogWrite (RIGHT_BACKWARD, 150);
     analogWrite (LEFT_FORWARD, 150);
     analogWrite (LEFT_BACKWARD, 0);     
   } else if (deg < 0 && deg > -360) {
@@ -282,8 +285,8 @@ void rotate(int deg){
 
     analogWrite (RIGHT_FORWARD, 150); 
     analogWrite (RIGHT_BACKWARD, 0);
-    analogWrite (LEFT_FORWARD, 150);
-    analogWrite (LEFT_BACKWARD, 0);    
+    analogWrite (LEFT_FORWARD, 0);
+    analogWrite (LEFT_BACKWARD, 150);    
   }
 
   delay(STEP5 * (deg/5));
@@ -295,24 +298,17 @@ void go(int dist) {
   if (dist > 0) {  
     //Forward
     digitalWrite(RIGHT_FORWARD, HIGH); 
-    digitalWrite(LEFT_FORWARD, HIGH); 
     digitalWrite(RIGHT_BACKWARD, LOW); 
+    digitalWrite(LEFT_FORWARD, HIGH); 
     digitalWrite(LEFT_BACKWARD, LOW);
-    analogWrite (RIGHT_BACKWARD, 0); 
-    analogWrite (LEFT_BACKWARD, 0);
+
     analogWrite (RIGHT_FORWARD, 150);
+    analogWrite (RIGHT_BACKWARD, 0); 
     analogWrite (LEFT_FORWARD, 150);
+    analogWrite (LEFT_BACKWARD, 0);
     
     delay(MOVE * dist);
    
-    analogWrite (RIGHT_FORWARD, 0); 
-    analogWrite (RIGHT_BACKWARD, 0);
-    analogWrite (LEFT_FORWARD, 0);  
-    analogWrite (LEFT_BACKWARD, 0);
-    digitalWrite(RIGHT_FORWARD, LOW); 
-    digitalWrite(RIGHT_BACKWARD, LOW); 
-    digitalWrite(LEFT_FORWARD, LOW); 
-    digitalWrite(LEFT_BACKWARD, LOW);
   } else if (dist < 0) {
     //Reverse
     digitalWrite(RIGHT_FORWARD, LOW); 
@@ -573,10 +569,10 @@ void failsafeSpam() {
     printStatus("-----------------", "ADVERTENCIA! -----------------", -1);
 }
 void dance() {
-    drive(25, 0);
-    drive(-25, 0);
-    drive(25, 0);
-    drive(-25, 0);
+    drive(100, 0);
+    drive(-100, 0);
+    drive(100, 0);
+    drive(-100, 0);
 }
 
 /**
@@ -584,8 +580,8 @@ void dance() {
  */
 
 void HITTING (int deg, int dis) {
-    int stepperDeg = (deg/5)*2;   //TODO: figure out how to make this close to being accurate
-    //move hitter into position
+    int stepperDeg = (deg/10)*2;   //TODO: figure out how to make this close to being accurate
+    //move hitter into position     //TODO: Change stepperDeg val
 //    myMotor.step(stepperDeg); //TODO
 
     printStatus("    {HITTING}", "HITTING BALL Degree: ", stepperDeg);
