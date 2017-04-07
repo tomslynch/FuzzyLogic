@@ -57,17 +57,20 @@ const int LEFT_BACKWARD = 7;
 /*
  * Globals
  */
+
  //TODO: tune constants
 int MOVE = 500; //delay for moving (delay for half second)
 int STEP5 = 50; //delay scale for rotation (delay time to move 5 degrees)
 
-int DIST_UNIT = 0;  //movement unit
+int DIST_UNIT = 1;  //movement unit
 int ROT_UNIT = 5;   //degree unit (5 degrees)
+
+int DISTANCE_LIMIT = 10;    //radar variation
 
 int COLOR_HIGH = 2000;
 int COLOR_LOW = 100;
 
-int DISTANCE_LIMIT = 10;
+int CHASSIS_DIS = 1;
 
 // color vars
 Color curColor;
@@ -84,8 +87,8 @@ long distanceBottom;
 int ballRot = 0; //rotation from line to find ball
 int redRot = 0;
 
-int deg[100];
-int dis[100];
+int scanDeg[100];
+int scanDis[100];
 int lineCounter = 0;
 
 /*
@@ -165,6 +168,7 @@ int findBall(){
     rotateOne();
     ballRot += ROT_UNIT;
     found = seeBall();
+      printStatus("    {BALL}", "SEARCHING...", ballRot);
   }
 
   if (found && ballRot < 360) {
@@ -186,12 +190,8 @@ int seeBall(){
   }
 }
 void printRadar() {
-  Serial.print("TOP: ");
-  Serial.print(distanceTop);
-  Serial.println(" CM");
-  Serial.print("BOTTOM: ");
-  Serial.print(distanceBottom);
-  Serial.println(" CM");
+    printStatus("    {BALL}", "   TOP: ", distanceTop);
+    printStatus("    {BALL}", "   BOTTOM: ", distanceBottom);
 
   if (distanceTop - distanceBottom >= 10) {
     Serial.println("---TARGET DETECTED---");
@@ -214,8 +214,7 @@ void printRadar() {
 
 void rotate(int deg){
   //rotate (POS = clockwise, NEG = counter-clockwise)
-  Serial.print("Rotating: "); 
-  Serial.println(deg);
+    printStatus("{MOVEMENT} ", "Rotating: ", deg);
 
   if (deg > 0 && deg <= 360) {
     /* -> clockwise ->
@@ -254,6 +253,7 @@ void rotate(int deg){
   resetTracks();
 }
 void go(int dist) {
+    printStatus("{MOVEMENT} ", "DRIVING: ", dist);
   if (dist > 0) {  
     //Forward
     digitalWrite(RIGHT_FORWARD, HIGH); 
@@ -286,7 +286,7 @@ void go(int dist) {
     analogWrite (RIGHT_FORWARD, 0);
     analogWrite (LEFT_FORWARD, 0);
     
-    delay(MOVE * dist);
+    delay(MOVE * abs(dist));
   }
 
   resetTracks();
@@ -314,20 +314,16 @@ void rotateOne() {
  */
  
 /**
- * SCAN MODE
+ * Pathfinder MODE
  */
 
- void scan() {
-
+ void pathfinder() {
   while(findRed()){
-    recordLine();  
+      recordLine();
+      printLine();
+      lineCounter++;
   }
-  
-  //find red line
-    //Found: record angle
-    //else: end scan mode
-    //move along red line
-    //when red -> white, record distance
+    printStatus("    {PATH}", "END PATHFINDER", redRot);
  }
 
 //Color sensor is on rear of chassis
@@ -341,9 +337,11 @@ void findRed() {
     rotateOne();
     redRot += ROT_UNIT;
     found = isRed();
+      printStatus("    {PATH}", "SEARCHING...", redRot);
   }
 
   if (found && redRot < 350) {
+      scanDeg[lineCounter] = redRot;
     return 1;   
   } else {
     return 0;
@@ -352,11 +350,28 @@ void findRed() {
 
 void recordLine() {
     int curDistance = 0;
+
     //go along line until white
     while(isRed()) {
         stepOne();
         curDistance += DIST_UNIT;
+        printStatus("    {PATH}", "MOVING...", curDistance);
     }
+
+    //Not red! back up chassis length
+    go(-CHASSIS_DIS);
+
+    //record
+    scanDis[lineCounter] = curDistance;
+}
+
+void printLine() {
+    Serial.print("[");
+    Serial.print(lineCounter);
+    Serial.print("]-degree: ");
+    Serial.print(scanDeg[lineCounter]);
+    Serial.print(", distance: ");
+    Serial.println(scanDis[lineCounter]);
 }
  
 
@@ -369,6 +384,19 @@ void recordLine() {
 
 
 
+/**
+ * Status Printer
+ */
+
+void printStatus(char * prefix, char * msg, int opt) {
+    Serial.print(prefix);
+    Serial.print(msg);
+    if (opt) {
+        Serial.println(opt);
+    } else {
+        Serial.println();
+    }
+}
 
 
 
