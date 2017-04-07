@@ -109,41 +109,41 @@ void loop() {
 
 
 //
-void check() {
-  long distanceBottom = (ultrasonicBottom.distanceRead());
-  Serial.print("BOTTOM: ");
-  Serial.print(distanceBottom);
-  Serial.println(" CM");
-  long distanceTop = (ultrasonicTop.distanceRead());
-  Serial.print("TOP: ");
-  Serial.print(distanceTop);
-  Serial.println(" CM");
-  if(distanceTop > distanceBottom){
-    driveForward();
-  }
-}
+//void check() {
+//  long distanceBottom = (ultrasonicBottom.distanceRead());
+//  Serial.print("BOTTOM: ");
+//  Serial.print(distanceBottom);
+//  Serial.println(" CM");
+//  long distanceTop = (ultrasonicTop.distanceRead());
+//  Serial.print("TOP: ");
+//  Serial.print(distanceTop);
+//  Serial.println(" CM");
+//  if(distanceTop > distanceBottom){
+//    driveForward();
+//  }
+//}
 
 
 
-void driveForward(){
-	Serial.println("MOVING FORWARD") ; 
-	digitalWrite(RIGHT_FORWARD, HIGH); 
-	digitalWrite(LEFT_FORWARD, HIGH) ; 
-  digitalWrite(RIGHT_BACKWARD, LOW); 
-  digitalWrite(LEFT_BACKWARD, LOW) ;
-  analogWrite (RIGHT_BACKWARD, 0) ; 
-  analogWrite (LEFT_BACKWARD, 0) ;
-	analogWrite (RIGHT_FORWARD, 150) ; 
-	analogWrite (LEFT_FORWARD, 150) ;
-  
-	delay(100);
- 
-  analogWrite (RIGHT_FORWARD, 0) ; 
-  analogWrite (LEFT_FORWARD, 0) ;
-  digitalWrite(RIGHT_FORWARD, LOW); 
-  digitalWrite(LEFT_FORWARD, LOW) ;
-  move();	
-}
+//void driveForward(){
+//	Serial.println("MOVING FORWARD") ; 
+//	digitalWrite(RIGHT_FORWARD, HIGH); 
+//	digitalWrite(LEFT_FORWARD, HIGH) ; 
+//  digitalWrite(RIGHT_BACKWARD, LOW); 
+//  digitalWrite(LEFT_BACKWARD, LOW) ;
+//  analogWrite (RIGHT_BACKWARD, 0) ; 
+//  analogWrite (LEFT_BACKWARD, 0) ;
+//	analogWrite (RIGHT_FORWARD, 150) ; 
+//	analogWrite (LEFT_FORWARD, 150) ;
+//  
+//	delay(100);
+// 
+//  analogWrite (RIGHT_FORWARD, 0) ; 
+//  analogWrite (LEFT_FORWARD, 0) ;
+//  digitalWrite(RIGHT_FORWARD, LOW); 
+//  digitalWrite(LEFT_FORWARD, LOW) ;
+//  move();	
+//}
 
 void printColor(){
   uint16_t colorTemp, lux;
@@ -164,15 +164,15 @@ int isRed(Color &curColor){
   return (curColor.r > 2000 && curColor.g < 100 && curColor.b < 100);
 }
 
-void move() {
-  for (pos = 0; pos <= 180; pos += 5) { // goes from 0 degrees to 180 degrees
-    // in steps of 1 degree
-    Serial.println("HEER");
-    myservo.write(pos);              // tell servo to go to position in variable 'pos'
-    delay(100);                       // waits 15ms for the servo to reach the position
-  }
-  
-}
+//void move() {
+//  for (pos = 0; pos <= 180; pos += 5) { // goes from 0 degrees to 180 degrees
+//    // in steps of 1 degree
+//    Serial.println("HEER");
+//    myservo.write(pos);              // tell servo to go to position in variable 'pos'
+//    delay(100);                       // waits 15ms for the servo to reach the position
+//  }
+//  
+//}
 
 /*
  * ------- BASIC Movement --------
@@ -322,7 +322,17 @@ void printRadar() {
 
  //SCAN
  void scan() {
+
+  while(findRed()){
+    recordLine();    
+  }
   
+  //find red line
+    //Found: record angle
+    //else: end scan mode
+  //move along red line
+    //when red -> white, record distance
+    
  }
  
 
