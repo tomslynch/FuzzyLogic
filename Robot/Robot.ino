@@ -52,11 +52,8 @@ const int RIGHT_FORWARD = 5;
 const int LEFT_FORWARD = 6;
 const int LEFT_BACKWARD = 7;
 
-/*
- * Globals
- */
-
- //TODO: tune constants
+//CONSTANTS
+//TODO: tune constants
 int MOVE = 500; //delay for moving (delay for half second)
 int STEP5 = 50; //delay scale for rotation (delay time to move 5 degrees)
 
@@ -71,6 +68,15 @@ int COLOR_LOW = 100;
 int CHASSIS_DIS = 1;
 
 int PLAY_SCALE = 10;
+int RADAR_SCALE = 10;
+
+int HITTING_DIS = 10;
+int FAILSAFE_LIMIT = 15;
+
+
+/*
+ * Globals
+ */
 
 // color vars
 Color curColor;
@@ -83,20 +89,29 @@ int pos = 0;
 long distanceTop;
 long distanceBottom;
 
+long lastSeen;
+
 //movement track
 int ballRot = 0; //rotation from line to find ball
 int redRot = 0;
 
+//scan mode
 int scanDeg[100];
 int scanDis[100];
 int lineCounter = 0;
+int lineTotal = 0;
 
+//play mode
 int playDeg[100];
 int playDis[100];
 
+//tether
 int tetherDeg[100];
 int tetherDis[100];
 int tetherCounter;
+
+//hitter
+int strokes = 0;
 
 
 /*
@@ -192,6 +207,7 @@ int seeBall(){
   printRadar();
 
   if (distanceTop - distanceBottom >= DISTANCE_LIMIT) {
+      lastSeen = distanceBottom;
     return 1;
   } else {
     return 0;
@@ -213,7 +229,7 @@ void printRadar() {
  
 /*
  * deg = degrees to turn
- * dist = distance to move (
+ * dist = distance to move
  */
  void drive(int deg, int dist) {
   rotate(deg);
@@ -384,30 +400,119 @@ void printLine() {
 }
 
 /**
- * PLAY MODE
+ * Play MODE
  */
-//TODO: Tether to line when leaving to hit ball
 
  void play(){
     //pull values from pathfinder results
     scalePathfinder();
 
-     //
+     //Hit ball from start position
+     //TODO: HITTING(playDeg[lineCounter], playDis[lineCounter])
+
+     while(lineCounter != lineTotal || strokes >= FAILSAFE_LIMIT) {
+         tetherCounter = 0;
+
+         //move along line (half distance)
+         drive(playDeg[lineCounter], playDis[lineCounter]/2);
+         playDis[lineCounter] -= playDis[lineCounter]/2;
+
+         //Scan for ball
+         if (!findBall()) {
+             drive(0, playDis[lineCounter]);
+             playDis[lineCounter] = 0;
+         }
+
+         //TODO: handle worst case scenarios - can't find after moving across entire line
+         if (findBall()) {
+             //tether to correct ball
+             tetherDeg[0] = ballRot - ROT_UNIT;         // offset robot
+             tetherDis[0] = (lastSeen-10)/RADAR_SCALE;       // scale down distance
+             tether();
+         } else {
+             for (int i = 0; i < 10000; i++) {
+                 Serial.println("DOES NOT COMPUTE");
+             }
+         }
+
+         //decrement distance left at index position
+         if (playDis[lineCounter] != 0) {
+             drive(0, tetherDis[lineCounter]);
+         }
+
+         lineCounter++;
+     }
+
+    if (strokes >= FAILSAFE_LIMIT) {
+        godspeed();
+    }
 
 }
 
 void scalePathfinder() {
+    lineTotal = lineCounter;
+    lineCounter = 0;
     Serial.println("Your knowledge belongs to me, Pathfinder.");
-    for (int i = 0; i < lineCounter; i++) {
+    for (int i = 0; i <= lineTotal; i++) {
         playDeg[i] = scanDeg[i];
         playDis[i] = scanDis[i] * PLAY_SCALE;
     }
-    Serial.println("Your knowledge has been consumed. EHEHEHEHEEHEHEHHEHEHEHEH");
+    Serial.println("Your knowledge has been consumed.");
 }
 
+
 void tether() {
+    int distance = 0;
+    int returnDeg = 0;
+
+    printStatus("    {TETHER}", "DISEMBARKING... Distance: ", tetherDis[0]);
     //Get to ball
-    //calculate angle path
+    drive(-ROT_UNIT, tetherDis[tetherCounter]);
+
+    //find ball
+    findBall();
+
+    //record rotation and distance spotted
+    tetherCounter++;
+    tetherDeg[tetherCounter] = ballRot;
+
+    //quick check if ball is really close to us
+    if (lastSeen < HITTING_DIS) {
+        drive(0, -DIST_UNIT);
+    }
+
+    //move towards ball until in hitting range
+    while (seeBall() && lastSeen > HITTING_DIS) {
+        printStatus("    {TETHER}", "MOVING TOWARDS BALL... Distance: ", DIST_UNIT);
+        drive(0, DIST_UNIT);
+        distance += DIST_UNIT;
+    }
+
+    tetherDis[tetherCounter] = distance;
+
+    //Should be in range to hit now
+    //TODO: Calculate angle and distance with triangles
+    if (playDis[lineCounter] != 0) {
+        if (tetherDeg[0] > 180) {
+            returnDeg = (tetherDeg[0]/2);
+        } else {
+            returnDeg = (-tetherDeg[0]/2);
+        }
+    }
+    //TODO: HITTING(returnDeg, tetherDis[0])
+
+    //Reverse to line
+    returnToLine();
+}
+
+void returnToLine() {
+    for (int i = tetherCounter; i >= 0; i--) {
+        drive(0, -tetherDis[i]);
+        drive(-tetherDeg[i], 0);
+    }
+}
+
+void godspeed() {
 
 }
 
