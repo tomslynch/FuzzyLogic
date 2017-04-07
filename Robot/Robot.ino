@@ -99,18 +99,18 @@ int ballRot = 0; //rotation from line to find ball
 int redRot = 0;
 
 //scan mode
-int scanDeg[100];
-int scanDis[100];
+int scanDeg[10];
+int scanDis[10];
 int lineCounter = 0;
 int lineTotal = 0;
 
 //play mode
-int playDeg[100];
-int playDis[100];
+int playDeg[10];
+int playDis[10];
 
 //tether
-int tetherDeg[100];
-int tetherDis[100];
+int tetherDeg[10];
+int tetherDis[10];
 int tetherCounter;
 
 //hitter
@@ -160,6 +160,7 @@ void loop() {
     //TODO: check for modes with button
     strokes = 20;
     drive(250,250);
+//dance();
 //  play();
 }
 
@@ -315,7 +316,7 @@ void go(int dist) {
       digitalWrite(RIGHT_BACKWARD, HIGH);
       digitalWrite(LEFT_FORWARD, LOW);
       digitalWrite(LEFT_BACKWARD, HIGH);
-      
+
       analogWrite (RIGHT_FORWARD, 0);
       analogWrite (RIGHT_BACKWARD, 150);
       analogWrite (LEFT_FORWARD, 0);
