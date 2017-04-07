@@ -144,7 +144,7 @@ void updateColor(){
   Serial.println(" ");
 }
 // 1 if sees red, else 0
-int isRed(Color &curColor){
+int isRed(){
   updateColor();
   if (curColor.r > COLOR_HIGH && curColor.g < COLOR_LOW && curColor.b < COLOR_LOW) {
     return 1;
@@ -328,7 +328,7 @@ void rotateOne() {
 
 //Color sensor is on rear of chassis
 //return 1 if found red, if not return 0
-void findRed() {  
+int findRed() {  
   int found = isRed();
   redRot = 0;
 
