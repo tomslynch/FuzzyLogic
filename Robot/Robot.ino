@@ -331,7 +331,10 @@ void rotateOne() {
 void findRed() {  
   int found = isRed();
   redRot = 0;
-  
+
+    //first rotate 180 for rear of chassis to get readings
+    drive(180, 0);
+
   //Rotate to find red
   while(redRot != 350 || !found){
     rotateOne();
